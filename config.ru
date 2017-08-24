@@ -4,11 +4,11 @@ use Rack::Static, urls: ['/images'],
 class Pet
   def initialize(name)
     @name = name
-    @asleep = false # Сон, не хочет спать
-    @stuffInBelly     = 8 #  Сытость
-    @stuffInIntestine = 0 #  Туалет
-    @goodmood = true # Настроение, зависит от сна, сытости, туалета,
-    @health = 10 # Здоровье, зависит от сытости, настроения
+    @asleep = false #Doesn't want to sleep
+    @stuffInBelly     = 8 # satiety
+    @stuffInIntestine = 0 # toilet
+    @goodmood = true # Mood, depends on sleep, satiety, toilet
+    @health = 10 # Health, depends on sleep, satiety, toilet
   end
 
   @@born_img = "<h1><img src='/images/born.jpg' width='150' height='200'></h1>"
@@ -23,7 +23,7 @@ class Pet
 
   def call(env)
     @@condishion =
-    "<div style='float:left; width:220px; height:300px; border: 1px solid; padding: 5px;'><br>MY CONDITIONS 
+    "<div style='float:left; width:220px; height:300px; border: 1px solid; padding: 5px;'><br>MY CONDITIONS
       <p>&#127831; satiety: <b>#{@stuffInBelly}</b> (max 8)</p>
       <p>&#128169; intestine: <b>#{@stuffInIntestine}</b> (max 6)</p>
       <p>&#10010; health: <b>#{@health}</b> (max 10)</p>
@@ -38,14 +38,14 @@ class Pet
       <p><a href = \"/sleep\">Put me to bed</a></p>
       <p><a href = \"/rock\">Sing for me lullaby</a></p>
       <p><a href = \"/gift\">Bye me a gift</a></p></div>"
-      
-      
+
+
 
     req = Rack::Request.new(env)
     case req.path_info
-    when '/'      
+    when '/'
       [200, { 'Content-Type' => 'text/html' },
-       ["<h1>Hello, mate! I'm your new friend. <br>My name's #{@name}</h1> #{@@born_img} <br><h2>#{@info}</h2><br> #{@@condishion} #{@@choose}"]]       
+       ["<h1>Hello, mate! I'm your new friend. <br>My name's #{@name}</h1> #{@@born_img} <br><h2>#{@info}</h2><br> #{@@condishion} #{@@choose}"]]
 
     when /feed/
       feed
@@ -54,7 +54,7 @@ class Pet
 
     when /gift/
       gift
-      [200, { 'Content-Type' => 'text/html' },       
+      [200, { 'Content-Type' => 'text/html' },
         ["#{@giftfollow} <br> #{@@gift_img} <h2 style= 'color: red;'>#{@died}</h2> <h3>#{@info}<br> #{@follow}</h3><br> #{@@condishion} #{@@choose} "]]
 
     when /treat/
@@ -68,7 +68,7 @@ class Pet
        ["#{@toiletfollow} <br> #{@@toilet_img} <h2 style= 'color: red;'>#{@died}</h2> <h3>#{@info}<br> #{@follow}</h3><br> #{@@condishion} #{@@choose} "]]
 
     when /sleep/
-      sleep 
+      sleep
       [200, { 'Content-Type' => 'text/html' },
        ["#{@sleepfollow} <br> #{@@sleep_img} <h2 style= 'color: red;'>#{@died}</h2> <h3>#{@info}<br> #{@follow}</h3><br> #{@@condishion} #{@@choose} "]]
 
@@ -126,9 +126,9 @@ end
     @sleepfollow = '"hr...hrrr...hrrrrr..."'.upcase
     puts @sleepfollow
     # puts  @name + ' sleeping.'
-    @asleep = true # хочет спать
+    @asleep = true # wants sleep
     1.times do
-      if @asleep # хочет спать
+      if @asleep # wants sleep
         passageOfTime
         end
         if @asleep
@@ -137,7 +137,7 @@ end
       end
     end
     if @asleep
-      @asleep = false # не хочет спать
+      @asleep = false # doesn't want sleep
       @info = @name + ' wakes up and yawns.'
       puts @info
     end
@@ -156,11 +156,11 @@ end
     '<br>' + @name + ' drowses...'
     puts @rockfollow
     # puts 'You sing to ' + @name + 'lullaby.'
-    @asleep = true # хочет спать
+    @asleep = true
     # puts @name + ' drowses.'
     passageOfTime
     if @asleep
-      @asleep = false # не хочет спать
+      @asleep = false
       @rockfollow = '"Big stage is crying for you!!!"'.upcase
       puts @rockfollow
     end
@@ -172,52 +172,50 @@ end
     @stuffInBelly <= 2
   end
 
-  def poopy? #  кишечник полон?
+  def poopy?
     @stuffInIntestine > 3
   end
 
-  def passageOfTime # проходит некоторое время
+  def passageOfTime
     if @stuffInBelly > 0
-      #  Переместить пищу из желудка в кишечник.
+      #  Moove food from stomach to intestine
       @stuffInBelly  = @stuffInBelly - 1
       @stuffInIntestine = @stuffInIntestine + 1
-      
 
-    else #  страдает от голода
+
+    else # starving
       if @asleep
         @asleep = false
         @follow = 'He wakes up suddenly!'
         puts @follow
-        
+
         # puts 'He wakes up suddenly!'
       end
-      if @goodmood # плохое настроение
+      if @goodmood
         @goodmood = false
         @info = 'He whines!'
         puts @info
-        
+
       #    puts 'He whines!'
     end
       @died = 'Sorry!' + @name + ' died because of starvation!'
       puts @died
       # puts @name + ' died because of starvation!'
-      #exit  #Этим методом выходим из программы.
+      #exit  #Finish program
     end
 
     #-------------------------
     if @stuffInBelly <= 2
-      # ухудшается здоровье
-      @health  -= 2
+      @health  -= 2 # health down
     end
 
     if @goodmood == false
-      # ухудшается здоровье
       @health  -= 1
     end
 
     if @health > 3
     @goodmood = true
-    else  #  плохое здоровье
+    else  #  bad health
     @info = 'He has a fever!'
     puts @info
     end
@@ -227,7 +225,6 @@ end
       @died = 'Sorry!' + @name + ' died because of fever!'
       puts @died
       # puts @name + ' died because of fever!'
-      #exit  #Этим методом выходим из программы.
     end
     #-------------------------
 
@@ -240,16 +237,16 @@ end
     end
 
     if hungry?
-      if @asleep # не хочет спать
+      if @asleep
         @asleep = false
         @follow = 'He wakes up suddenly!'
         puts @follow
       # puts 'He wakes up suddenly!'
     end
-      if @goodmood # плохое настроение
+      if @goodmood
         @goodmood = false
         @info = 'He whines!'
-        puts @info        
+        puts @info
       # puts 'He whines!'
     end
       @follow = 'He is starving...'
@@ -263,7 +260,7 @@ end
         @follow = 'He wakes up!'
         puts @follow
         # puts 'He wakes up!'
-      end 
+      end
       @follow = 'He needs a pot...'
       puts @follow
       # puts @name + ' needs a pot...'
